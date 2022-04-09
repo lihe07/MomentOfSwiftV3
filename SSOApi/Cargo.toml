@@ -1,0 +1,9 @@
+[package]
+name = "SwiftBackend"
+version = "3.0.0"
+edition = "2021"
+authors = ["lihe07"]
+description = "3.x版本系统的后端服务"
+
+
+[dependencies]
