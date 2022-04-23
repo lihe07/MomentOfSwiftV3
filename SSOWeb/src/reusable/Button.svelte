@@ -7,6 +7,7 @@
     class={$$props.class + " " + type}
     class:dark={$theme === "dark"}
     class:light={$theme === "light"}
+    on:click
 >
     <slot />
 </button>

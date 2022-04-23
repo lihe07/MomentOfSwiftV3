@@ -1,7 +1,7 @@
 <script>
     import Input from "../reusable/Input.svelte";
     import Button from "../reusable/Button.svelte";
-    import { fade } from "svelte/transition";
+    import {fade} from "svelte/transition";
 
     let code;
 </script>
@@ -18,11 +18,12 @@
         width: 360px;
 
     }
+
     .main :global(.button) {
         width: 100%;
-        margin-top: 20px;
-        margin-bottom: 40px;
+        margin: 20px 0;
     }
+
     .main {
         text-align: center;
     }
