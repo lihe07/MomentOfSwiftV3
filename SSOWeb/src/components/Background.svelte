@@ -8,6 +8,13 @@
             class:dark={$theme === "dark"}
             class:light={$theme === "light"}
     >
+        <p class="likes">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512">
+                <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"
+                      fill="currentColor"></path>
+            </svg>
+            114514
+        </p>
         <p class="copyright">图片版权所属....</p>
     </div>
 </div>
@@ -70,19 +77,53 @@
     .mask.light {
         background: rgba(255, 255, 255, 0.6);
     }
+
     .copyright {
         font-size: 12px;
         margin: 20px;
         position: absolute;
         right: 0;
         bottom: 0;
+        font-family: var(--font-sans-serif);
+        transition: all .2s;
     }
+
+    /**/
     .light .copyright {
         color: rgba(0, 0, 0, .2);
     }
+
     .dark .copyright {
-        color: rgba(255, 255,255,.3);
+        color: rgba(255, 255, 255, .3);
     }
+
+    .likes {
+        margin: 20px;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        font-size: 12px;
+        display: flex;
+        font-family: var(--font-sans-serif);
+        align-items: center;
+        transition: all .2s;
+    }
+
+    .likes svg {
+        width: 12px;
+        height: 12px;
+        margin-right: 3px;
+    }
+
+    .light .likes {
+        color: rgba(0, 0, 0, .2);
+    }
+
+    .dark .likes {
+        color: rgba(255, 255, 255, .3);
+
+    }
+
 
     .content {
         position: absolute;

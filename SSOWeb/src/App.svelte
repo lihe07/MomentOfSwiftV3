@@ -16,12 +16,12 @@
         "/register": Register,
     };
 
-    let main_height = tweened($location === "/register" ? 253 : 305, {
+    let main_height = tweened($location === "/register" ? 253 : 358, {
         duration: 300,
         easing: cubicInOut
     });
     location.subscribe(path => {
-        main_height.set(path === "/register" ? 253 : 305)
+        main_height.set(path === "/register" ? 253 : 358)
     })
 </script>
 
@@ -56,10 +56,6 @@
 </Background>
 
 <style>
-    @font-face {
-        font-family: "Source Han Sans";
-        src: url("/SourceHanSansSC-VF.ttf.woff2");
-    }
     main {
         display: flex;
         flex-direction: column;
@@ -75,7 +71,7 @@
     :global(h1) {
         font-size: 24px;
         font-weight: bold;
-        font-family: "Source Han Sans";
+        font-family: var(--font-sans-serif);
         letter-spacing: 6px;
         /* 深浅转换 .2s */
         transition: color 0.2s;
@@ -91,7 +87,7 @@
         font-size: 14px;
         /* 深浅转换 .2s */
         transition: color 0.2s;
-        font-family: "Source Han Sans";
+        font-family: var(--font-sans-serif);
         letter-spacing: 1px;
     }
     main.dark .subtitle {

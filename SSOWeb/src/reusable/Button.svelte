@@ -21,8 +21,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s;
         line-height: 100%;
+        letter-spacing: 2px;
+        transition: all .2s;
     }
     button.green.light {
         background-color: rgba(217, 240, 228, 1);
@@ -39,6 +40,11 @@
     button.green.dark:hover, button.green.dark:focus {
         filter: brightness(0.8);
     }
+
+    button.blue.light {
+
+    }
+
 
     button:active {
         transform: scale(0.95);

@@ -1,18 +1,27 @@
 <script>
-    import { theme } from "../stores.js";
+    import {theme} from "../stores.js";
+    import {createEventDispatcher} from "svelte";
 
+    const dispatch = createEventDispatcher();
     let className;
 
-    export { className as class };
+    export {className as class};
     export let placeholder;
+    export let value = "";
 </script>
 
 <input
-    class:dark={$theme === "dark"}
-    class:light={$theme === "light"}
-    type="text"
-    class={className}
-    {placeholder}
+        class:dark={$theme === "dark"}
+        class:light={$theme === "light"}
+        type="text"
+        class={className}
+        {placeholder}
+        bind:value
+        on:keydown={e => {
+        if (e.key === "Enter") {
+            dispatch("enter")
+        }
+    }}
 />
 
 <style>
@@ -26,11 +35,14 @@
         padding-right: 20px;
         border-style: none;
         font-size: 16px;
+        letter-spacing: 1px;
     }
+
     input.dark:focus {
         /* transform: scale(1.03); */
         background-color: hsl(240, 8%, 12%);
     }
+
     input.light:focus {
         background-color: hsl(0, 0%, 90%);
     }
@@ -40,6 +52,7 @@
         background-color: rgba(23, 23, 30, 1);
         color: white;
     }
+
     input.light {
         background-color: rgba(242, 242, 242, 1);
         color: black;
