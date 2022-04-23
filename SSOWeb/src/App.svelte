@@ -8,32 +8,44 @@
     import Switch from "./reusable/Switch.svelte";
     import { theme } from "./stores";
     import { location } from "svelte-spa-router";
+    import {tweened} from "svelte/motion";
+    import {cubicInOut} from "svelte/easing";
 
     const routes = {
         "/": Login,
         "/register": Register,
     };
+
+    let main_height = tweened($location === "/register" ? 253 : 305, {
+        duration: 300,
+        easing: cubicInOut
+    });
+    location.subscribe(path => {
+        main_height.set(path === "/register" ? 253 : 305)
+    })
 </script>
 
 <Background>
     <main class:dark={$theme === "dark"} class:light={$theme === "light"}>
         <Card class="main-card">
-            <div class="header">
-                <div>
-                    <h1 class="title">欢迎 {$location}</h1>
-                    <span class="subtitle">请登录或注册吧</span>
-                </div>
+            <div style:height={$main_height + "px"}>
+                <div class="header">
+                    <div>
+                        <h1 class="title">欢迎{$location === "/register" ? "新成员加入" : "回来"}!</h1>
+                        <span class="subtitle">请登录或注册吧 ヾ(*ﾟ▽ﾟ)ﾉ </span>
+                    </div>
 
-                <Switch
-                    class="theme-switch"
-                    on:change={() => {
+                    <Switch
+                            class="theme-switch"
+                            on:change={() => {
                         theme.update((t) => (t === "dark" ? "light" : "dark"));
                     }}
-                    checked={$theme === "dark"}
-                />
-            </div>
+                            checked={$theme === "dark"}
+                    />
+                </div>
 
-            <Router {routes} />
+                <Router {routes} />
+            </div>
             <div style="text-align: center;">
                 <Link href={$location === "/register" ? "#" : "#/register"}>
                     {$location === "/register" ? "登录" : "注册"}

@@ -3,14 +3,14 @@
     import Link from "../reusable/Link.svelte";
     import Button from "../reusable/Button.svelte";
     import { theme } from "../stores";
-    import { slide } from "svelte/transition";
+    import { fade } from "svelte/transition";
 </script>
 
 <div
     class="main"
     class:dark={$theme === "dark"}
     class:light={$theme === "light"}
-    out:slide
+    in:fade
 >
     <Input class="input" placeholder="邮箱或姓名" />
 
