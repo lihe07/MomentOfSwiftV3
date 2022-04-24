@@ -1,6 +1,6 @@
-# SSOWeb
+# LabelWeb
 
-系统单点登录的桌面端界面
+标注识别系统的桌面端界面
 
 ## 时间进度
 
@@ -9,7 +9,7 @@ gantt
 dateFormat YYYY-MM-DD
 section lihe07
 设计: done, design, 2022-03-01, 2022-04-03
-原型开发: active, prototype, 2022-04-07, 2022-04-24
+原型开发: active, prototype, 2022-04-24, 2022-04-25
 ```
 
 ## 开发、编译、部署

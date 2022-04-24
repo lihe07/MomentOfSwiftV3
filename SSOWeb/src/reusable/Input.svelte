@@ -1,13 +1,20 @@
 <script>
     import {theme} from "../stores.js";
-    import {createEventDispatcher} from "svelte";
+    import {createEventDispatcher, onMount} from "svelte";
 
     const dispatch = createEventDispatcher();
     let className;
 
     export {className as class};
+    let dom;
     export let placeholder;
     export let value = "";
+    export let auto_focus = false;
+    onMount(() => {
+        if (auto_focus) {
+            dom.focus();
+        }
+    });
 </script>
 
 <input
@@ -17,6 +24,7 @@
         class={className}
         {placeholder}
         bind:value
+        bind:this={dom}
         on:keydown={e => {
         if (e.key === "Enter") {
             dispatch("enter")

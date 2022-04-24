@@ -35,11 +35,13 @@
     });
 
     // 检查location有无next属性
+    let next = false;
 
     if (window.location.href.split("?")[1]) {
         let key = window.location.href.split("?")[1].split("=")[0];
         let value = window.location.href.split("?")[1].split("=")[1];
-        console.log(key, value);
+        value = decodeURIComponent(value);
+        next = value;
     }
 
     // setInterval(() => {
@@ -47,7 +49,7 @@
     // }, 100);
 </script>
 
-<Background>
+<Background instant={next !== false}>
     <main class:dark={$theme === "dark"} class:light={$theme === "light"}>
         <Card class="main-card">
             <div style:height={$outer_height + "px"} class="outer">
@@ -57,17 +59,19 @@
                             <h1 class="title">
                                 {#if $location === "/register"}
                                     欢迎新成员加入！
-                                {:else if $location === "/"}
+                                {:else if $location === "/" && next === false}
                                     欢迎回来！
+                                {:else if next}
+                                    先登陆吧！
                                 {:else}
                                     404
                                 {/if}
                             </h1>
                             <span class="subtitle">
-                                {#if $location === "/register"}
+                                {#if $location === "/register" || $location === "/" && next === false}
                                     请登录或注册吧 ヾ(*ﾟ▽ﾟ)ﾉ
-                                {:else if $location === "/"}
-                                    请登录或注册吧 ヾ(*ﾟ▽ﾟ)ﾉ
+                                {:else if next}
+                                    访问这个地址需要登录
                                 {:else}
                                     Not Found :(
                                 {/if}

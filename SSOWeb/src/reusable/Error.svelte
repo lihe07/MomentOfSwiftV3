@@ -2,9 +2,23 @@
     import Button from "./Button.svelte";
     export let reason;
     export let back_text;
-    // import { createEventDispatcher } from "svelte";
-    // const dispatch = createEventDispatcher();
+    import { createEventDispatcher, onDestroy } from "svelte";
+    const dispatch = createEventDispatcher();
     import { theme } from "../stores.js";
+    import { onMount } from "svelte";
+
+    function back(e) {
+        if (e.key === "Backspace") {
+            dispatch("click");
+        }
+    }
+
+    onMount(() => {
+        window.addEventListener("keydown", back);
+    });
+    onDestroy(() => {
+        window.removeEventListener("keydown", back);
+    });
 </script>
 
 <div

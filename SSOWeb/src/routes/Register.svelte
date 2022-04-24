@@ -8,7 +8,12 @@
 </script>
 
 <div in:fade={{ delay: 300 }} class="main">
-    <Input class="input" placeholder="邀请码" bind:value={code} />
+    <Input
+        class="input"
+        placeholder="邀请码"
+        bind:value={code}
+        auto_focus={true}
+    />
     <Button class="button">下一步</Button>
     <div style="height: 10px;" />
     <Link href="#/">登录</Link>

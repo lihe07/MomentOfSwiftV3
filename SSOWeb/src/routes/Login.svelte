@@ -8,8 +8,9 @@
     import { fade, fly } from "svelte/transition";
 
     let name = "";
+    let user; // 存储用户信息
 
-    let stage = "name"; // name: 姓名, qr: 二维码, password: 密码, error: 错误, loading: 加载
+    let stage = "name"; // name: 姓名, qr: 二维码, password: 密码, error: 错误, loading: 加载, success: 成功, code: 验证码
 
     // error页面展示的数据
     let error_data = {};
@@ -21,24 +22,12 @@
             reason,
             back_to,
         };
-        window.setTimeout(() => {
-            window.addEventListener("keydown", back);
-        }, 500);
-    }
-
-    // error -> any
-    function back(e) {
-        if (e.key === "Enter" || !e.key) {
-            stage = error_data.back_to;
-            window.removeEventListener("keydown", back);
-        }
     }
 
     // any -> loading
     let loading_data = {};
-    function loading(next) {
+    function loading() {
         loading_data = {
-            next,
             logs: [],
         };
         stage = "loading";
@@ -48,6 +37,7 @@
         loading_data.logs = [...loading_data.logs, { type, message }];
     }
 
+    import { authenticate_session, get_user_by_name } from "../apis";
     // name -> password / name -> error
     function load_name() {
         console.log(name);
@@ -57,11 +47,68 @@
         }
         loading("password");
         log("info", "校验客户端...");
-        setTimeout(() => {
-            log("success", "客户端校验通过!");
-            log("info", "获取用户信息...");
-        }, 500);
+
+        authenticate_session(undefined)
+            .then(() => {
+                log("success", "客户端校验成功");
+                log("info", "获取用户信息...");
+                get_user_by_name(name)
+                    .then((_user) => {
+                        user = _user;
+                        log("success", "用户信息获取成功");
+                        stage = "password";
+                    })
+                    .catch((e) => {
+                        if (e.name === "user does not exist") {
+                            log("error", "用户不存在");
+                            error("用户不存在", "name");
+                            name = "";
+                        } else {
+                            log("error", "获取用户信息失败");
+                            error("获取用户信息失败", "name");
+                        }
+                    });
+            })
+            .catch((e) => {
+                if (e.name === "verification code required") {
+                    log("error", "服务器反馈需要验证码");
+                    stage = "code";
+                }
+            });
     }
+
+    import { get_qrcode } from "../apis";
+
+    // name -> loading
+    let qr_link;
+    function loading_qr() {
+        loading();
+        log("info", "获取登录二维码...");
+        get_qrcode().then((link) => {
+            log("success", "获取登录二维码成功!");
+            qr_link = link;
+            stage = "qr";
+        });
+    }
+
+    import { init_session } from "../apis";
+    loading();
+    log("info", "同步客户端身份数据...");
+    init_session()
+        .then((session) => {
+            log("success", "客户端身份数据同步成功!");
+            if (session.login) {
+                // 已经登录了
+                stage = "success";
+                user = session.user;
+            } else {
+                stage = "name";
+            }
+        })
+        .catch((e) => {
+            log("error", "客户端身份数据同步失败!");
+            error("无法与服务器同步客户端身份", "name");
+        });
 </script>
 
 <div
@@ -75,6 +122,7 @@
             <Input
                 class="input"
                 placeholder="邮箱或姓名"
+                auto_focus={true}
                 bind:value={name}
                 on:enter={load_name}
             />
@@ -85,7 +133,7 @@
                 <div />
             </div>
 
-            <Button class="button" type="green">
+            <Button class="button" type="green" on:click={loading_qr}>
                 <i class="icon">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -111,12 +159,18 @@
             <Link href="#/register">注册</Link>
         </div>
     {/if}
+    {#if stage === "password"}
+        TODO... Avatar + Username
+    {/if}
     {#if stage === "loading"}
         <div in:fly={{ x: 40 }}>
             <div style="height: 40px;" />
             <Loading logs={loading_data.logs} />
             <div style="height: 20px;" />
         </div>
+    {/if}
+    {#if stage === "qr"}
+        <img src={qr_link} alt={qr_link} />
     {/if}
     {#if stage === "error"}
         <div in:fly={{ x: 40 }}>
