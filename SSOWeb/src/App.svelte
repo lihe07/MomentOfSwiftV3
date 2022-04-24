@@ -3,64 +3,90 @@
     import Card from "./components/Card.svelte";
     import Link from "./reusable/Link.svelte";
     import Router from "svelte-spa-router";
+
     import Login from "./routes/Login.svelte";
     import Register from "./routes/register.svelte";
+    import NotFound from "./routes/404.svelte";
+
     import Switch from "./reusable/Switch.svelte";
-    import {theme} from "./stores";
-    import {location} from "svelte-spa-router";
-    import {tweened} from "svelte/motion";
-    import {cubicInOut} from "svelte/easing";
+    import { theme } from "./stores";
+    import { location } from "svelte-spa-router";
+    import { tweened } from "svelte/motion";
+    import { cubicInOut } from "svelte/easing";
+    import { onMount } from "svelte";
 
     const routes = {
         "/": Login,
         "/register": Register,
+        "/.*": NotFound,
     };
 
-    let inner_height;
+    let inner;
     let outer_height = tweened(0, {
         duration: 300,
-        easing: cubicInOut
+        easing: cubicInOut,
     });
-    let initial = true;
-    $: {
-        if (inner_height && initial) {
-            outer_height.set($location === "/register" ? 253 : 358)
-            initial = false;
-        } else if (inner_height) {
-            outer_height.set(inner_height)
-        }
+
+    const observer = new ResizeObserver(() => {
+        outer_height.set(inner.offsetHeight);
+    });
+    onMount(() => {
+        observer.observe(inner);
+    });
+
+    // 检查location有无next属性
+
+    if (window.location.href.split("?")[1]) {
+        let key = window.location.href.split("?")[1].split("=")[0];
+        let value = window.location.href.split("?")[1].split("=")[1];
+        console.log(key, value);
     }
+
+    // setInterval(() => {
+    //     console.log(inner_height);
+    // }, 100);
 </script>
 
 <Background>
     <main class:dark={$theme === "dark"} class:light={$theme === "light"}>
         <Card class="main-card">
             <div style:height={$outer_height + "px"} class="outer">
-                <div class="inner" bind:offsetHeight={inner_height}>
+                <div class="inner" bind:this={inner}>
                     <div class="header">
                         <div>
-                            <h1 class="title">欢迎{$location === "/register" ? "新成员加入" : "回来"}!</h1>
-                            <span class="subtitle">请登录或注册吧 ヾ(*ﾟ▽ﾟ)ﾉ </span>
+                            <h1 class="title">
+                                {#if $location === "/register"}
+                                    欢迎新成员加入！
+                                {:else if $location === "/"}
+                                    欢迎回来！
+                                {:else}
+                                    404
+                                {/if}
+                            </h1>
+                            <span class="subtitle">
+                                {#if $location === "/register"}
+                                    请登录或注册吧 ヾ(*ﾟ▽ﾟ)ﾉ
+                                {:else if $location === "/"}
+                                    请登录或注册吧 ヾ(*ﾟ▽ﾟ)ﾉ
+                                {:else}
+                                    Not Found :(
+                                {/if}
+                            </span>
                         </div>
 
                         <Switch
-                                class="theme-switch"
-                                on:change={() => {
-                        theme.update((t) => (t === "dark" ? "light" : "dark"));
-                    }}
-                                checked={$theme === "dark"}
+                            class="theme-switch"
+                            on:change={() => {
+                                theme.update((t) =>
+                                    t === "dark" ? "light" : "dark"
+                                );
+                            }}
+                            checked={$theme === "dark"}
                         />
                     </div>
 
-                    <Router {routes}/>
-                    <div style="height: 20px;"></div>
-
+                    <Router {routes} />
                 </div>
-            </div>
-            <div style="text-align: center;">
-                <Link href={$location === "/register" ? "#" : "#/register"}>
-                    {$location === "/register" ? "登录" : "注册"}
-                </Link>
             </div>
         </Card>
     </main>

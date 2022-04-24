@@ -86,6 +86,7 @@
         bottom: 0;
         font-family: var(--font-sans-serif);
         transition: all .2s;
+        letter-spacing: 1px;
     }
 
     /**/

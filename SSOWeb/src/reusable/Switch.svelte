@@ -65,9 +65,7 @@
         transition: background-color 0.2s, all 0.3s;
     }
 
-    .switch.checked {
-        /* background: #bada55; */
-    }
+
 
     .switch.checked .circle {
         left: calc(100% - 5px);

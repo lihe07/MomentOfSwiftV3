@@ -1,27 +1,13 @@
 <script>
-    import {theme} from "../stores.js";
+    import { theme } from "../stores.js";
 
     export let href;
-    export let cd = 200; // 点击延迟
-    let cooling = false;
-    let dom;
-
 </script>
 
-<a class:dark={$theme === "dark"} class:light={$theme === "light"} {href} bind:this={dom} on:click={e => {
-    if (cooling) {
-        e.preventDefault()
-    } else {
-        cooling = true;
-        setTimeout(() => {
-            cooling = false
-            // 让自己失焦
-            dom.blur()
-        }, cd)
-    }
-}}>
-    <slot/>
+<a class:dark={$theme === "dark"} class:light={$theme === "light"} {href}>
+    <slot />
 </a>
+
 <style>
     a {
         text-decoration: none;

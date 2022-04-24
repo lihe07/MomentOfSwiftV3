@@ -2,83 +2,131 @@
     import Input from "../reusable/Input.svelte";
     import Link from "../reusable/Link.svelte";
     import Button from "../reusable/Button.svelte";
-    import {theme} from "../stores";
-    import {fade, fly} from "svelte/transition";
+    import Loading from "../reusable/Loading.svelte";
+    import Error from "../reusable/Error.svelte";
+    import { theme } from "../stores";
+    import { fade, fly } from "svelte/transition";
 
-    let name = '';
+    let name = "";
 
     let stage = "name"; // name: 姓名, qr: 二维码, password: 密码, error: 错误, loading: 加载
 
     // error页面展示的数据
-    let error_data;
+    let error_data = {};
 
     // any -> error
     function error(reason, back_to) {
-        stage = "error"
+        stage = "error";
         error_data = {
             reason,
-            back_to
+            back_to,
+        };
+        window.setTimeout(() => {
+            window.addEventListener("keydown", back);
+        }, 500);
+    }
+
+    // error -> any
+    function back(e) {
+        if (e.key === "Enter" || !e.key) {
+            stage = error_data.back_to;
+            window.removeEventListener("keydown", back);
         }
+    }
+
+    // any -> loading
+    let loading_data = {};
+    function loading(next) {
+        loading_data = {
+            next,
+            logs: [],
+        };
+        stage = "loading";
+    }
+
+    function log(type, message) {
+        loading_data.logs = [...loading_data.logs, { type, message }];
     }
 
     // name -> password / name -> error
     function load_name() {
-        console.log(name)
+        console.log(name);
         if (name.length === 0) {
             error("请输入邮箱或姓名", "name");
+            return;
         }
+        loading("password");
+        log("info", "校验客户端...");
+        setTimeout(() => {
+            log("success", "客户端校验通过!");
+            log("info", "获取用户信息...");
+        }, 500);
     }
 </script>
 
 <div
-        class="main"
-        class:dark={$theme === "dark"}
-        class:light={$theme === "light"}
-        in:fade={{delay: 300}}
+    class="main"
+    class:dark={$theme === "dark"}
+    class:light={$theme === "light"}
+    in:fade={{ delay: 300 }}
 >
     {#if stage === "name"}
-        <div in:fly={{x:40}}>
-            <Input class="input" placeholder="邮箱或姓名" bind:value={name}/>
+        <div in:fly={{ x: 40 }}>
+            <Input
+                class="input"
+                placeholder="邮箱或姓名"
+                bind:value={name}
+                on:enter={load_name}
+            />
 
             <div class="split">
-                <div></div>
+                <div />
                 <span>或者</span>
-                <div></div>
+                <div />
             </div>
 
             <Button class="button" type="green">
                 <i class="icon">
                     <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            xmlns:xlink="http://www.w3.org/1999/xlink"
-                            viewBox="0 0 512 512"
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 512 512"
                     >
                         <path
-                                data-name="XMLID 501 -1"
-                                d="M408.67 298.53a21 21 0 1 1 20.9-21a20.85 20.85 0 0 1-20.9 21m-102.17 0a21 21 0 1 1 20.9-21a20.84 20.84 0 0 1-20.9 21m152.09 118.86C491.1 394.08 512 359.13 512 319.51c0-71.08-68.5-129.35-154.41-129.35s-154.42 58.27-154.42 129.35s68.5 129.34 154.42 129.34c17.41 0 34.83-2.33 49.92-7c2.49-.86 3.48-1.17 4.64-1.17a16.67 16.67 0 0 1 8.13 2.34L454 462.83a11.62 11.62 0 0 0 3.48 1.17a5 5 0 0 0 4.65-4.66a14.27 14.27 0 0 0-.77-3.86c-.41-1.46-5-16-7.36-25.27a18.94 18.94 0 0 1-.33-3.47a11.4 11.4 0 0 1 5-9.35"
-                                fill="currentColor"
+                            data-name="XMLID 501 -1"
+                            d="M408.67 298.53a21 21 0 1 1 20.9-21a20.85 20.85 0 0 1-20.9 21m-102.17 0a21 21 0 1 1 20.9-21a20.84 20.84 0 0 1-20.9 21m152.09 118.86C491.1 394.08 512 359.13 512 319.51c0-71.08-68.5-129.35-154.41-129.35s-154.42 58.27-154.42 129.35s68.5 129.34 154.42 129.34c17.41 0 34.83-2.33 49.92-7c2.49-.86 3.48-1.17 4.64-1.17a16.67 16.67 0 0 1 8.13 2.34L454 462.83a11.62 11.62 0 0 0 3.48 1.17a5 5 0 0 0 4.65-4.66a14.27 14.27 0 0 0-.77-3.86c-.41-1.46-5-16-7.36-25.27a18.94 18.94 0 0 1-.33-3.47a11.4 11.4 0 0 1 5-9.35"
+                            fill="currentColor"
                         />
                         <path
-                                data-name="XMLID 505 -7"
-                                d="M246.13 178.51a24.47 24.47 0 0 1 0-48.94c12.77 0 24.38 11.65 24.38 24.47c1.16 12.82-10.45 24.47-24.38 24.47m-123.06 0A24.47 24.47 0 1 1 147.45 154a24.57 24.57 0 0 1-24.38 24.47M184.6 48C82.43 48 0 116.75 0 203c0 46.61 24.38 88.56 63.85 116.53C67.34 321.84 68 327 68 329a11.38 11.38 0 0 1-.66 4.49C63.85 345.14 59.4 364 59.21 365s-1.16 3.5-1.16 4.66a5.49 5.49 0 0 0 5.8 5.83a7.15 7.15 0 0 0 3.49-1.17L108 351c3.49-2.33 5.81-2.33 9.29-2.33a16.33 16.33 0 0 1 5.81 1.16c18.57 5.83 39.47 8.16 60.37 8.16h10.45a133.24 133.24 0 0 1-5.81-38.45c0-78.08 75.47-141 168.35-141h10.45C354.1 105.1 277.48 48 184.6 48"
-                                fill="currentColor"
+                            data-name="XMLID 505 -7"
+                            d="M246.13 178.51a24.47 24.47 0 0 1 0-48.94c12.77 0 24.38 11.65 24.38 24.47c1.16 12.82-10.45 24.47-24.38 24.47m-123.06 0A24.47 24.47 0 1 1 147.45 154a24.57 24.57 0 0 1-24.38 24.47M184.6 48C82.43 48 0 116.75 0 203c0 46.61 24.38 88.56 63.85 116.53C67.34 321.84 68 327 68 329a11.38 11.38 0 0 1-.66 4.49C63.85 345.14 59.4 364 59.21 365s-1.16 3.5-1.16 4.66a5.49 5.49 0 0 0 5.8 5.83a7.15 7.15 0 0 0 3.49-1.17L108 351c3.49-2.33 5.81-2.33 9.29-2.33a16.33 16.33 0 0 1 5.81 1.16c18.57 5.83 39.47 8.16 60.37 8.16h10.45a133.24 133.24 0 0 1-5.81-38.45c0-78.08 75.47-141 168.35-141h10.45C354.1 105.1 277.48 48 184.6 48"
+                            fill="currentColor"
                         />
-                    </svg
-                    >
+                    </svg>
                 </i>
                 微信登录
             </Button>
-            <Button class="button" on:click={load_name}>
-                下一步
-            </Button>
+            <Button class="button" on:click={load_name}>下一步</Button>
+            <div style="height: 10px;" />
+            <Link href="#/register">注册</Link>
         </div>
     {/if}
     {#if stage === "loading"}
+        <div in:fly={{ x: 40 }}>
+            <div style="height: 40px;" />
+            <Loading logs={loading_data.logs} />
+            <div style="height: 20px;" />
+        </div>
     {/if}
     {#if stage === "error"}
-        <div in:fly={{x: 40}}>
-            <h1>{error_data.reason}</h1>
-            <Button on:click={() => {stage = error_data.back_to}} class="button">返回</Button>
+        <div in:fly={{ x: 40 }}>
+            <Error
+                reason={error_data.reason}
+                back_text="返回"
+                on:click={() => {
+                    stage = error_data.back_to;
+                }}
+            />
         </div>
     {/if}
 </div>
@@ -140,7 +188,7 @@
     .icon > svg {
         width: 28px;
         height: 28px;
-        transition: color .2s;
+        transition: color 0.2s;
     }
 
     /*  */
@@ -156,5 +204,36 @@
         margin-top: 20px;
         margin-bottom: 20px;
         width: 400px;
+    }
+
+    .error-icon {
+        margin-top: 20px;
+    }
+    .error-icon > svg {
+        color: #ef5350;
+        width: 100px;
+    }
+    h2 {
+        margin: 0;
+        font-family: var(--font-sans-serif);
+        letter-spacing: 2px;
+    }
+    .dark h2 {
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .light h2 {
+        color: rgba(0, 0, 0, 0.8);
+    }
+    h3 {
+        margin: 0;
+        font-family: var(--font-sans-serif);
+        letter-spacing: 1px;
+        font-weight: lighter;
+    }
+    .dark h3 {
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .light h3 {
+        color: rgba(0, 0, 0, 0.8);
     }
 </style>

@@ -43,7 +43,12 @@
     }
 
     button.blue.light {
-
+        background-color: #DBEBFD;
+        color: rgba(32, 128, 240, 1);
+    }
+    button.blue.dark {
+        color: rgba(112, 192, 232, 1);
+        background-color: rgba(55, 68, 80, 1);
     }
 
 
