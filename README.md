@@ -14,10 +14,11 @@
   - [ ] **DashboardApi**：大部分数据交互
   - [ ] **LabelApi**：运行模型及标注数据
   - [ ] **CommunityApi**：社区数据交互
+- **Docs**：设计文档
 
 ## 网络架构
 
-### 托管
+### 托管及部署
 
 全部后端服务均部署在[SCF云函数](https://console.cloud.tencent.com/scf)上
 
