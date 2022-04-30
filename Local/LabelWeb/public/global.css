@@ -1,6 +1,21 @@
-html, body {
+html,
+body {
 	position: relative;
 	width: 100%;
 	height: 100%;
 	margin: 0;
+}
+
+:root {
+	--font-sans-serif: -apple-system, BlinkMacSystemFont, "Apple Color Emoji",
+		"Segoe UI Emoji", "Segoe UI Symbol", "Segoe UI", "PingFang SC",
+		HarmonyOS_Regular, "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue",
+		Helvetica, "Source Han Sans SC", "Noto Sans CJK SC", "WenQuanYi Micro Hei",
+		Arial, sans-serif;
+	--font-serif: STZhongsong, STSong, "Noto Serif CJK", "Noto Serif SC", PMingLiu,
+		SimSun, "WenQuanYi Bitmap Song", "Times New Roman", Times, serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	--font-mono: ui-monospace, SFMono-Regular, "SF Mono", "Cascadia Code",
+		"Segoe UI Mono", "Source Code Pro", Menlo, Consolas, "Liberation Mono",
+		monospace;
 }

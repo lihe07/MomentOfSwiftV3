@@ -10,6 +10,7 @@
     export let placeholder;
     export let value = "";
     export let auto_focus = false;
+    export let type = "text";
     onMount(() => {
         if (auto_focus) {
             dom.focus();
@@ -17,6 +18,7 @@
     });
 </script>
 
+{#if type === "text"}
 <input
         class:dark={$theme === "dark"}
         class:light={$theme === "light"}
@@ -31,6 +33,22 @@
         }
     }}
 />
+{:else if type === "password"}
+<input
+        class:dark={$theme === "dark"}
+        class:light={$theme === "light"}
+        type="password"
+        class={className}
+        {placeholder}
+        bind:value
+        bind:this={dom}
+        on:keydown={e => {
+        if (e.key === "Enter") {
+            dispatch("enter")
+        }
+    }}
+/>
+{/if}
 
 <style>
     input {
