@@ -113,6 +113,7 @@
         opacity: 0.6;
         line-height: 100%;
         font-size: 18px;
+        font-family: var(--font-sans-serif);
     }
     a > svg {
         width: 19px;

@@ -1,9 +1,21 @@
 <script>
+    // Stores & APIs
     import { theme } from "../stores.js";
+    import { get_background } from "../apis";
+
     export let instant = false; // 是否没有入场动画
+
+    let url = "https://pic-1301810764.cos.ap-beijing.myqcloud.com/bg.jpg"; // fallback url
+    let author;
+    let likes;
+    get_background().then((data) => {
+        url = data.url;
+        author = data.author;
+        likes = data.likes;
+    });
 </script>
 
-<div class="bg">
+<div class="bg" style:background-image={`url(${url})`}>
     <div
         class="mask"
         class:dark={$theme === "dark"}
@@ -21,9 +33,9 @@
                     fill="currentColor"
                 />
             </svg>
-            114514
+            {likes}
         </p>
-        <p class="copyright">图片版权所属....</p>
+        <p class="copyright">图片版权所属作者 @{author}</p>
     </div>
 </div>
 <div class="content" class:instant>
@@ -52,7 +64,6 @@
     }
 
     .bg {
-        background: url("/bg.jpg");
         background-size: cover;
         position: absolute;
         top: 0;
