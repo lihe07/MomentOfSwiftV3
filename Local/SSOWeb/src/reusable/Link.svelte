@@ -1,11 +1,12 @@
 <script>
-    import { theme } from "../stores.js";
+    import {theme} from "../stores.js";
 
+    export let type = "default";
     export let href;
 </script>
 
-<a class:dark={$theme === "dark"} class:light={$theme === "light"} {href}>
-    <slot />
+<a class:dark={$theme === "dark"} class:light={$theme === "light"} {href} on:click class:pale={type==="pale"}>
+    <slot/>
 </a>
 
 <style>
@@ -46,5 +47,13 @@
 
     a:active {
         font-size: 14px;
+    }
+
+    .pale.dark {
+        color: rgb(200, 200, 200);
+    }
+
+    .pale.light {
+        color: rgb(100, 100, 100);
     }
 </style>

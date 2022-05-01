@@ -3,16 +3,25 @@ const zhangsan = {
     id: 114514,
     name: "张三",
     avatar: "https://avatars0.githubusercontent.com/u/114514?v=4",
-    email: "li@imilhe.com"
+    email: "li@imilhe.com",
+    permissions: ["member.1"] // 小组1的组员
 }
 
 const lisi = {
     id: 1919810,
     name: "李四",
     avatar: "https://avatars0.githubusercontent.com/u/1919810?v=4",
-    email: "li@imlihe.com"
+    email: "li@imlihe.com",
+    permissions: ["member.1", "member.2.leader"]
 }
 
+const group1 = {
+    name: "测试小组1",
+
+}
+const group2 = {
+    name: "测试小组2"
+}
 
 // 获取并初始化session
 export const init_session = () => {
@@ -118,5 +127,20 @@ export const login = (id, password) => {
                 message: "密码错误"
             })
         }
+    })
+}
+
+// 获取多个小组的信息
+export const get_groups = (ids) => {
+    return new Promise((resolve, reject) => {
+        resolve(ids.map(id => {
+            if (id === 1) {
+                return group1
+            } else if (id === 2) {
+                return group2
+            } else {
+                return null
+            }
+        }))
     })
 }

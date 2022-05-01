@@ -12,6 +12,7 @@
     import {theme} from "../stores";
     import {fade, fly} from "svelte/transition";
     import {authenticate_session, get_user_by_name, get_users_by_email, get_qrcode, init_session, login} from "../apis";
+    import StageSelect from "../components/StageSelect.svelte";
 
 
     // =============
@@ -19,7 +20,8 @@
     // =============
     let user; // 存储用户信息
     let users; // select阶段使用的用户信息
-    let stage = "name"; // name: 姓名, qr: 二维码, password: 密码, error: 错误, loading: 加载, success: 成功, code: 验证码
+    let stage = "name"; // name: 姓名, qr: 二维码, password: 密码, error: 错误, loading: 加载, success: 成功, code: 验证码, select: 选择
+    let password_last = "name"; // 输入密码的上一个stage 可以是name / select
     let error_data = {}; // error阶段展示的数据
     let loading_data = {}; // loading阶段展示的数据
     let qr_link; // qr阶段的二维码
@@ -85,10 +87,15 @@
                                 log("success", "通过邮箱找到了 1 个用户");
                                 user = _users[0]
                                 log("success", "用户信息获取成功")
+                                stage = "password"
+                                password_last = "name"
                             } else {
                                 // 有多个用户
                                 log("success", "通过邮箱找到了 " + _users.length + " 个用户");
-
+                                users = _users;
+                                log("success", "用户信息获取成功");
+                                stage = "select"
+                                password_last = "select"
                             }
                         })
                         .catch((_) => {
@@ -101,6 +108,7 @@
                             user = _user;
                             log("success", "用户信息获取成功");
                             stage = "password";
+                            password_last = "name"
                         })
                         .catch((e) => {
                             if (e.name === "user does not exist") {
@@ -191,13 +199,21 @@
         <StageName on:next={load_name_or_email} on:wechat={loading_qr}/>
     {/if}
     {#if stage === "password"}
-        <StagePassword {user} on:next={loading_login}/>
+        <StagePassword {user} on:next={loading_login} on:last={() => {
+            stage = password_last
+        }}/>
+    {/if}
+    {#if stage === "select"}
+        <StageSelect {users} on:next={(e)=>{
+            user = e.detail;
+            stage = "password";
+        }}></StageSelect>
     {/if}
     {#if stage === "loading"}
         <div in:fly={{ x: 40 }}>
-            <div style="height: 40px;"/>
+            <div style="height: 40px;"></div>
             <Loading logs={loading_data.logs}/>
-            <div style="height: 20px;"/>
+            <div style="height: 20px;"></div>
         </div>
     {/if}
     {#if stage === "qr"}
