@@ -41,7 +41,7 @@
         align-items: center;
         justify-content: center;
         height: 40px;
-        width: 100%;
+        width: 210px;
         border-radius: 20px;
         padding: 5px 15px;
         transition: all .2s;
@@ -58,7 +58,7 @@
 
 
     .container:hover, .container.focused {
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0);
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     }
 
     input {

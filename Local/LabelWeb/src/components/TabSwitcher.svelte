@@ -119,7 +119,7 @@
     .cooling_down {
         opacity: 0.7;
 
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0) !important;
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0) !important;
     }
 
     .cooling_down .tab {
