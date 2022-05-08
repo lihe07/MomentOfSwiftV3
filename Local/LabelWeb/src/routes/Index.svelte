@@ -1,46 +1,56 @@
 <script>
     // Stores & APIs
-    import { theme } from "../stores";
+    import {theme} from "../stores";
+    import Router, {location, querystring} from "svelte-spa-router";
+
     // Components
-    import MyTasks from "../components/MyTasks.svelte";
+    import SearchInput from "../components/SearchInput.svelte";
+    import TabSwitcher from "../components/TabSwitcher.svelte";
+    import SortMethodSelector from "../components/SortMethodSelector.svelte";
+
     // Reusable
     import Card from "../reusable/Card.svelte";
+
+    // Routes
+    import MyTasks from "./MyTasks.svelte";
+    import AllTasks from "./AllTasks.svelte";
+
+
+    const routes = {
+        "/mine": MyTasks,
+        "/all": AllTasks,
+    }
+    console.log($location)
+    if ($location === "/") {
+        window.location.href = "#/mine";
+    }
+    $:tab = $location === "/mine" ? 0 : 1;
+
 </script>
 
 <div class:dark={$theme === "dark"} class:light={$theme === "light"}>
-    <h1>我的计数</h1>
-    <hr />
-    <select>
-        <option>近7天</option>
-        <option>近14天</option>
-        <option>近30天</option>
-        <option>自定义</option>
-    </select>
+    <div class="header">
+        <div>
+            <SortMethodSelector/>
+        </div>
+        <div>
+            <TabSwitcher current={tab} on:switch={e => {
+                window.location.href = `#/${e.detail === 0 ? "mine" : "all"}`;
+            }}/>
+        </div>
+        <div>
+            <SearchInput/>
+        </div>
+    </div>
+    <Router {routes}/>
 
-    <input type="date" />
-    <span>-</span>
-    <input type="date" />
-
-    <h1>最新创建</h1>
-    <hr />
 </div>
 
 <style>
-    h1 {
-        letter-spacing: 2px;
-        margin-bottom: 10px;
-    }
-    .dark h1 {
-        color: white;
-    }
-    hr {
-        border-style: solid;
-        border-width: 2px;
-    }
-    .dark hr {
-        border-color: #2e2e40;
-    }
-    .light hr {
-        border-color: #e7e7e7;
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
     }
 </style>

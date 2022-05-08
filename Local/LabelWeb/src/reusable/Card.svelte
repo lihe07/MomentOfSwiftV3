@@ -15,6 +15,7 @@
     .main {
         padding: 40px;
         border-radius: 20px;
+        transition: all 0.2s;
     }
     .dark.main {
         background-color: #212130;
