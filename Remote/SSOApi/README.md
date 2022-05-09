@@ -1,6 +1,6 @@
 # SSOApi
 
-单点登录及注册后端服务，基于标准Tide+Graph QL模板
+单点登录及注册后端服务
 
 ## 结构
 
@@ -13,6 +13,4 @@
 - [async-std](https://github.com/async-rs/async-std)
 - [tide](https://github.com/http-rs/tide/)
 - [async-graphql](https://github.com/async-graphql/async-graphql)
-
-## 配置及部署指南
 

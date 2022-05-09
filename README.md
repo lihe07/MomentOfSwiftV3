@@ -14,6 +14,7 @@
   - [ ] **DashboardApi**：大部分数据交互
   - [ ] **LabelApi**：运行模型及标注数据
   - [ ] **CommunityApi**：社区数据交互
+  - [ ] **DataModel(lib)**：数据模型
 - **Docs**：设计文档
 
 ## 网络架构
