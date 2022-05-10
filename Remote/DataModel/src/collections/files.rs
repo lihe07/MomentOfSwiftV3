@@ -52,8 +52,9 @@ impl File {
     /// 获取该文件内联模式(`Content Disposition: inline`)传输的预签名链接
     fn generate_signed_inline_url(&self, expires: u32) -> String {
         let mut params = HashMap::new();
-        params.insert("response-content-disposition", "inline;filename=" + url_escape::encode_component(&self.name) + ";");
-        params.insert("response-content-type", &self.mime_type);
+        let disposition = format!("inline;filename={};", url_escape::encode_component(&self.name));
+        params.insert("response-content-disposition", &*disposition);
+        params.insert("response-content-type", self.mime_type.as_str());
         sign(
             "GET",
             &self.path,
@@ -65,7 +66,8 @@ impl File {
     /// 获取该文件附件模式(`Content Disposition: attachment`)传输的预签名链接
     fn generate_signed_attachment_url(&self, expires: u32) -> String {
         let mut params = HashMap::new();
-        params.insert("response-content-disposition", "attachment;filename=" + url_escape::encode_component(&self.name) + ";");
+        let disposition = format!("attachment;filename={};", url_escape::encode_component(&self.name));
+        params.insert("response-content-disposition", &*disposition);
         params.insert("response-content-type", &self.mime_type);
         sign(
             "GET",
@@ -109,7 +111,7 @@ fn sign(method: &str, key: &str, expires: u32, params: HashMap<&str, &str>, oss_
         if params.is_empty() {
             "".to_string()
         } else {
-            let queries = params.iter().map(|(k, v)| format!("{}={}", k, v)).collect::<Vec<_>>();
+            let queries = params.iter().map(|(k, v)| format!("{}={}", k, url_escape::encode_component(v))).collect::<Vec<_>>();
             "?".to_string() + &*queries.join("&")
         }
     };
@@ -147,6 +149,8 @@ mod tests {
         params.insert("response-content-type", "text/plain");
         params.insert("response-content-disposition", "inline;filename=test.svg");
 
+        dbg!(sign("GET", key, 60, params.to_owned(), &OSSConfig::default()));
+        params.insert("response-content-disposition", "attachment;filename=test.svg");
         dbg!(sign("GET", key, 60, params, &OSSConfig::default()));
     }
 
