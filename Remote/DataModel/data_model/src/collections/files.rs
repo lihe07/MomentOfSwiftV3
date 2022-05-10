@@ -1,10 +1,8 @@
-use std::collections::HashMap;
-use std::fmt::format;
 use std::string::ToString;
 use mongodm::prelude::*;
 use serde::{Deserialize, Serialize};
-use super::ById;
 use hmac::Mac;
+use urlqstring::QueryParams;
 
 
 pub struct CollConf;
@@ -25,12 +23,13 @@ impl CollectionConfig for CollConf {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, data_model_macro::ToJson, data_model_macro::ById)]
 pub struct File {
     pub id: uuid::Uuid,
     // ...
     pub name: String,
     // 原始文件名
+    #[hidden] // 不在响应中体现
     pub path: String,
     // OSS存储路径
     pub last_modified_time: bson::DateTime,
@@ -39,6 +38,7 @@ pub struct File {
     // 创建时间
     pub mime_type: String,
     // MIME类型
+    #[expand(model = File)]
     pub owner: uuid::Uuid, // 文件所有者
 }
 
@@ -46,34 +46,33 @@ impl Model for File {
     type CollConf = CollConf;
 }
 
-impl ById for File {}
 
 impl File {
     /// 获取该文件内联模式(`Content Disposition: inline`)传输的预签名链接
     fn generate_signed_inline_url(&self, expires: u32) -> String {
-        let mut params = HashMap::new();
         let disposition = format!("inline;filename={};", url_escape::encode_component(&self.name));
-        params.insert("response-content-disposition", &*disposition);
-        params.insert("response-content-type", self.mime_type.as_str());
         sign(
             "GET",
             &self.path,
             expires,
-            params,
+            vec![
+                ("response-content-disposition", &*disposition),
+                ("response-content-type", self.mime_type.as_str()),
+            ],
             &OSSConfig::default(),
         )
     }
     /// 获取该文件附件模式(`Content Disposition: attachment`)传输的预签名链接
     fn generate_signed_attachment_url(&self, expires: u32) -> String {
-        let mut params = HashMap::new();
         let disposition = format!("attachment;filename={};", url_escape::encode_component(&self.name));
-        params.insert("response-content-disposition", &*disposition);
-        params.insert("response-content-type", &self.mime_type);
         sign(
             "GET",
             &self.path,
             expires,
-            params,
+            vec![
+                ("response-content-disposition", &*disposition),
+                ("response-content-type", self.mime_type.as_str()),
+            ],
             &OSSConfig::default(),
         )
     }
@@ -101,20 +100,21 @@ impl Default for OSSConfig {
 }
 
 
-fn sign(method: &str, key: &str, expires: u32, params: HashMap<&str, &str>, oss_config: &OSSConfig) -> String {
+fn sign(method: &str, key: &str, expires: u32, params: Vec<(&str, &str)>, oss_config: &OSSConfig) -> String {
     let expires_at = chrono::Utc::now() + chrono::Duration::seconds(expires as i64);
     let expires_at = expires_at.timestamp();
     // 生成签名
 
     let headers_string = "";
     let sub_resource_string = {
-        if params.is_empty() {
-            "".to_string()
+        let s = params.iter().map(|(k, v)| format!("{}={}", k, v)).collect::<Vec<_>>();
+        if s.is_empty() {
+            "".to_owned()
         } else {
-            let queries = params.iter().map(|(k, v)| format!("{}={}", k, url_escape::encode_component(v))).collect::<Vec<_>>();
-            "?".to_string() + &*queries.join("&")
+            format!("?{}", s.join("&"))
         }
     };
+
     let resource_string = format!("/{}/{}{}", oss_config.bucket_name, key, sub_resource_string);
 
     let date = format!("{}", expires_at);
@@ -125,33 +125,44 @@ fn sign(method: &str, key: &str, expires: u32, params: HashMap<&str, &str>, oss_
                                  date,
                                  headers_string,
                                  resource_string);
+    dbg!(&string_to_sign);
     let mut hmac = hmac::Hmac::<sha1::Sha1>::new_from_slice(oss_config.access_key_secret.as_bytes()).unwrap();
     hmac.update(string_to_sign.as_bytes());
     let signature = base64::encode(&hmac.finalize().into_bytes());
-    let signature = url_escape::encode_component(&signature);
-    let mut params = format!("?OSSAccessKeyId={}&Expires={}&Signature={}{}", oss_config.access_key_id, expires_at, signature, sub_resource_string.replace("?", "&"));
+
+
+    let params = QueryParams::from(params)
+        .add_query_string("OSSAccessKeyId", &oss_config.access_key_id)
+        .add_query_string("Expires", &expires_at.to_string())
+        .add_query_string("Signature", &signature)
+        .stringify();
     if let Some(custom_domain) = &oss_config.custom_domain {
-        format!("{}/{}{}", custom_domain, key, params)
+        format!("{}/{}?{}", custom_domain, key, params)
     } else {
-        format!("https://{}.{}/{}{}", oss_config.bucket_name, oss_config.endpoint, key, params)
+        format!("https://{}.{}/{}?{}", oss_config.bucket_name, oss_config.endpoint, key, params)
     }
 }
 
-
+#[cfg(test)]
 mod tests {
-    use std::string::ToString;
     use super::*;
+    use crate::collections::{ById, ToJson};
 
     #[test]
     fn pure_sign() {
         let key = "67e55044-10b1-426f-9247-bb680e5fe0c8";
-        let mut params = HashMap::new();
-        params.insert("response-content-type", "text/plain");
-        params.insert("response-content-disposition", "inline;filename=test.svg");
+        // 这里要注意百分号编码
+        let params = vec![
+            ("response-content-disposition", "inline;filename=%E4%B8%AD%E6%96%87%E5%90%8D.svg;"),
+            ("response-content-type", "text/plain"),
+        ];
 
-        dbg!(sign("GET", key, 60, params.to_owned(), &OSSConfig::default()));
-        params.insert("response-content-disposition", "attachment;filename=test.svg");
-        dbg!(sign("GET", key, 60, params, &OSSConfig::default()));
+        dbg!(sign("GET", key, 600, params.to_owned(), &OSSConfig::default()));
+        let params = vec![
+            ("response-content-disposition", "attachment;filename=%E4%B8%AD%E6%96%87%E5%90%8D.svg;"),
+            ("response-content-type", "text/plain"),
+        ];
+        dbg!(sign("GET", key, 600, params, &OSSConfig::default()));
     }
 
     #[async_std::test]
@@ -159,6 +170,7 @@ mod tests {
         let client = mongodm::mongo::Client::with_options(
             mongodm::mongo::options::ClientOptions::parse(crate::config::CONNECTION_STRING).await?,
         )?;
+
         let db = client.database(crate::config::DATABASE_NAME);
         let repo = db.repository::<File>();
         let file = File::by_id(&repo, "SOME_ID").await;
@@ -172,9 +184,23 @@ mod tests {
         }
         Ok(())
     }
-}
 
-// GET\n\n\n1652098944\n/momentofswift/67e55044-10b1-426f-9247-bb680e5fe0c8
-// GET\n\n\n1652099129\n/momentofswift/67e55044-10b1-426f-9247-bb680e5fe0c8
-//
-// GET\n\n\n1652098889\n\n/momentofswift/67e55044-10b1-426f-9247-bb680e5fe0c8
+    #[test]
+    fn test_hidden_attribute() {
+        let file = File {
+            id: uuid::Uuid::new_v4(),
+
+            name: "name".to_string(),
+            path: "path".to_string(),
+            last_modified_time: chrono::Utc::now().into(),
+            created_time: chrono::Utc::now().into(),
+            mime_type: "mime_type".to_string(),
+            owner: uuid::Uuid::new_v4(),
+        };
+        // dbg!(serde_json::to_value(file));
+        let result: serde_json::Value = file.to_json_without_expand();
+        if let Some(_) = result.get("path") {
+            panic!("#[hidden] 标签没有生效");
+        }
+    }
+}

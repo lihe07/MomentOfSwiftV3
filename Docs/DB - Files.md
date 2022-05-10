@@ -32,5 +32,9 @@
 
 ## 操作方法
 
-- generate_signed_inline_url 获取一个 `ContentDisposition: inline` 的签名链接
-- generate_signed_attachment_url 与其类似
+- [x]  generate_signed_inline_url 获取一个 `ContentDisposition: inline` 的签名链接
+
+> ​	**注意：**实现这个方法的时候，**必须**对name使用*百分号编码*，否则会出现编码不兼容的问题（尤其是文件名中出现中文或其他字符的情况）
+
+- [x] generate_signed_attachment_url 与其类似
+- [ ] 

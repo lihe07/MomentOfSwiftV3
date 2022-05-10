@@ -1,3 +1,5 @@
+#[allow(dead_code)]
+
 pub mod collections;
 mod config;
 
@@ -9,3 +11,4 @@ mod tests {
         assert_eq!(result, 4);
     }
 }
+
