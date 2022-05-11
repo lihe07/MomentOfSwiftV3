@@ -167,13 +167,7 @@ mod tests {
 
     #[async_std::test]
     async fn generate_signature() -> anyhow::Result<()> {
-        let client = mongodm::mongo::Client::with_options(
-            mongodm::mongo::options::ClientOptions::parse(crate::config::CONNECTION_STRING).await?,
-        )?;
-
-        let db = client.database(crate::config::DATABASE_NAME);
-        let repo = db.repository::<File>();
-        let file = File::by_id(&repo, "SOME_ID").await;
+        let file = File::by_id("SOME_ID").await;
         if let Some(file) = file {
             let signed_inline_url = file.generate_signed_inline_url(3600);
             let signed_attachment_url = file.generate_signed_attachment_url(3600);

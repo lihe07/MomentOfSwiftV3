@@ -6,11 +6,11 @@
 
 - [/src/](./src/README.md): Source Code
 - /Cargo.toml: Project Configuration
-- /.gitignore: Ignored files
 
 ## 主要上游项目
 
 - [async-std](https://github.com/async-rs/async-std)
-- [tide](https://github.com/http-rs/tide/)
-- [async-graphql](https://github.com/async-graphql/async-graphql)
 
+- [tide](https://github.com/http-rs/tide/)
+
+  

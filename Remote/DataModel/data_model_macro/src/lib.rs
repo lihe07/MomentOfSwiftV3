@@ -9,20 +9,20 @@ pub fn by_id(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let name = &input.ident;
     let generics = input.generics.clone();
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-    let async_trait: syn::Attribute = syn::parse_quote!(#[async_trait::async_trait]);
 
     let impl_block = quote! {
-        #async_trait
+        #[async_trait::async_trait]
         impl #impl_generics crate::collections::ById for #name #ty_generics #where_clause {
 
             /// 根据id获取一个实例
-            async fn by_id<T: Into<String> + Send>(repo: &mongodm::Repository<Self>, id: T) -> Option<Self> {
+            async fn by_id<T: Into<String> + Send>(id: T) -> Option<Self> {
                 // 默认实现
                 // 先从缓存中查找
                 let id = id.into();
                 if let Some(data) = crate::collections::CACHE.get(&id).await {
                     Some(bson::from_slice(data.as_slice()).unwrap())
                 } else {
+                    let repo = crate::config::DB.repository::<#name>();
                     // 如果缓存中没有，则从数据库中查找
                     let result = repo.find_one(bson::doc! {
                         "id": id.to_owned()
@@ -38,12 +38,12 @@ pub fn by_id(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
                 }
             }
             /// 根据多个id查找多个实体
-            async fn by_ids<T: Into<Vec<String>> + Send>(repo: &mongodm::Repository<Self>, ids: T) -> Vec<Self> {
+            async fn by_ids<T: Into<Vec<String>> + Send>(ids: T) -> Vec<Self> {
                 // 默认实现 循环调用 by_id
                 let ids = ids.into();
                 let mut result = Vec::new();
                 for id in ids {
-                    if let Some(doc) = Self::by_id(repo, id).await {
+                    if let Some(doc) = Self::by_id(id).await {
                         result.push(doc);
                     }
                 }
@@ -186,9 +186,16 @@ pub fn to_json(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     for (field_name, model) in expand_fields {
         find_expand_fields.extend(quote! {
             if let serde_json::Value::String(id) = object.get(#field_name).unwrap() {
-                let repo = db.repository::<#model>();
-                let model = #model::by_id(&repo, id).await.unwrap();
-                object.insert(#field_name.to_string(), model.to_json_without_expand());
+                if let Some(model) = #model::by_id(id).await {
+                    object.insert(#field_name.to_string(), model.to_json_without_expand());
+                } else {
+                    // 如果没有找到，则写入null
+                    object.insert(#field_name.to_string(), serde_json::Value::Null);
+                }
+
+            } else {
+                // 如果不是string类型，则直接删除
+                object.remove(#field_name);
             }
         });
     }
@@ -197,7 +204,7 @@ pub fn to_json(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let impl_block = quote! {
         #[async_trait::async_trait]
         impl #impl_generics crate::collections::ToJson for #name #ty_generics #where_clause {
-            async fn to_json(self, db: &mongodm::mongo::Database) -> serde_json::Value {
+            async fn to_json(self) -> serde_json::Value {
                 use crate::collections::ById;
                 let mut value = self.to_json_without_expand();
                 if let serde_json::Value::Object(ref mut object) = value {
