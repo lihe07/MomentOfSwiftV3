@@ -14,13 +14,7 @@ uuid = { version = "1.0.0", features = ["v4", "serde", "fast-rng"] }
 mongodm = { version = "0.9.0", features = ["async-std-runtime"], default-features = false }
 async-std = { version = "1.11.0", features = ["attributes"] }
 anyhow = "1.0.57"
-#mem_cache = "0.1.2"
 async-trait = "0.1.53"
-hmac = "0.12.1"
-base64 = "0.13.0"
 r-cache = "0.4.4"
 lazy_static = "1.4.0"
-sha1 = "0.10.1"
-url-escape = "0.1.1"
-urlqstring = "0.3.5"
 data_model_macro = { path = "../data_model_macro" }

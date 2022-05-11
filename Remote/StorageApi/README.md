@@ -4,7 +4,8 @@
 
 ## 结构
 
-
+- [`./src/`](./src/README.md): Source Code
+- `/Cargo.toml`: Project Configuration
 
 ## 流程分析
 
@@ -59,4 +60,4 @@ sequenceDiagram
 
 ## 接口文档
 
-**GET** `/files/<id>`	获取
+**GET** `/files/<id>`：获取一个文件的元信息

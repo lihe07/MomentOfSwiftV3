@@ -390,19 +390,14 @@ dependencies = [
  "anyhow",
  "async-std",
  "async-trait",
- "base64",
  "bson",
  "chrono",
  "data_model_macro",
- "hmac",
  "lazy_static",
  "mongodm",
  "r-cache",
  "serde",
  "serde_json",
- "sha1",
- "url-escape",
- "urlqstring",
  "uuid 1.0.0",
 ]
 
@@ -1247,17 +1242,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "sha1"
-version = "0.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c77f4e7f65455545c2153c1253d25056825e77ee2533f0e41deb65a93a34852f"
-dependencies = [
- "cfg-if",
- "cpufeatures",
- "digest",
-]
-
-[[package]]
 name = "sha2"
 version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1554,21 +1538,6 @@ dependencies = [
  "matches",
  "percent-encoding",
 ]
-
-[[package]]
-name = "url-escape"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "44e0ce4d1246d075ca5abec4b41d33e87a6054d08e2366b63205665e950db218"
-dependencies = [
- "percent-encoding",
-]
-
-[[package]]
-name = "urlqstring"
-version = "0.3.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "25ef3473a06a065718d8ec7cd7acc6a35fc20f836dee7661ad3b64ea3cc2e0cc"
 
 [[package]]
 name = "uuid"
