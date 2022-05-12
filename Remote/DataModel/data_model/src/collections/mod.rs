@@ -1,4 +1,9 @@
 pub mod files;
+pub mod users;
+
+// Re-export collection models
+pub use files::File;
+pub use users::User;
 
 use std::time::Duration;
 use r_cache::cache::Cache;

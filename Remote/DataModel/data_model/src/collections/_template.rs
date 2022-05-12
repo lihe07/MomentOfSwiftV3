@@ -1,12 +1,13 @@
-use bson::oid::ObjectId;
+use std::string::ToString;
 use mongodm::prelude::*;
 use serde::{Deserialize, Serialize};
+
 
 pub struct CollConf;
 
 impl CollectionConfig for CollConf {
     fn collection_name() -> &'static str {
-        "my_collection" // collection name
+        "..." // collection name
     }
 
     // fn collection_options() -> Option<MongoCollectionOptions> {
@@ -20,35 +21,22 @@ impl CollectionConfig for CollConf {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-pub struct TemplateModel {
+#[derive(Serialize, Deserialize, Debug, PartialEq, data_model_macro::ToJson, data_model_macro::ById)]
+pub struct MyModel {
     pub id: uuid::Uuid,
     // ...
 }
 
-impl Model for TemplateModel {
+impl Model for MyModel {
     type CollConf = CollConf;
 }
 
-impl TemplateModel {
-    // ...
-}
 
+#[cfg(test)]
 mod tests {
     use super::*;
-
     #[async_std::test]
-    async fn insert_model() -> anyhow::Result<()> {
-        let client = mongodm::mongo::Client::with_options(
-            mongodm::mongo::options::ClientOptions::parse(crate::config::CONNECTION_STRING).await?,
-        )?;
-        let db = client.database("db_name");
-        let repo = db.repository::<TemplateModel>();
-        repo.insert_one(
-            TemplateModel {
-                id: uuid::Uuid::new_v4(),
-            }
-            , None).await?;
-        Ok(())
+    fn it_works() {
+        // ...
     }
 }

@@ -1,8 +1,6 @@
 use std::string::ToString;
 use mongodm::prelude::*;
 use serde::{Deserialize, Serialize};
-use hmac::Mac;
-use urlqstring::QueryParams;
 
 
 pub struct CollConf;
