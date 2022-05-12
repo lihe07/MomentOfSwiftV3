@@ -1,5 +1,6 @@
 pub mod files;
 pub mod users;
+pub mod groups;
 
 // Re-export collection models
 pub use files::File;

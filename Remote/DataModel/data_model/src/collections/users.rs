@@ -43,10 +43,26 @@ impl Model for User {
 // 公共方法
 impl User {
     /// 通过邮箱查找多个用户
-    pub async fn by_email<T: Into<String>>(email: T) -> anyhow::Result<Self> {
-        let repo = DB.repository();
+    pub async fn by_email<T: Into<String>>(email: T) -> anyhow::Result<Vec<Self>> {
+        let repo = DB.repository::<User>();
         let cursor = repo.find(doc! {"email": email.into()}, None).await?;
-        cursor.collect().await
+        let results: Vec<mongodm::mongo::error::Result<_>> = cursor.collect().await;
+        let mut users = vec![];
+        for result in results {
+            users.push(result?);
+        }
+        Ok(users)
+    }
+    /// 通过姓名查找单个用户
+    pub async fn by_name<T: Into<String>>(name: T) -> anyhow::Result<Option<Self>> {
+        let repo = DB.repository::<User>();
+        let cursor = repo.find_one(doc! {"name": name.into()}, None).await?;
+        Ok(cursor)
+    }
+    /// 某个name是否存在
+    pub async fn name_exists<T: Into<String>>(name: T) -> anyhow::Result<bool> {
+        let repo = DB.repository::<User>();
+        Ok(repo.count_documents(doc! {"name": name.into()}, None).await? > 0)
     }
 }
 
