@@ -1,16 +1,52 @@
 <script>
     // Stores & APIs
     import {theme} from "../stores";
-    import {createEventDispatcher} from "svelte";
+    import {createEventDispatcher, onDestroy, onMount} from "svelte";
+    import {fly} from "svelte/transition";
 
     const dispatch = createEventDispatcher();
 
-    let show_dropdown = false;
+    let show_dropdown = true;
+    let cooling_down = false;
+    let button;
+
+    function check_blur(e) {
+        if (cooling_down) {
+            return;
+        }
+        // 如果点击了下拉框，则不处理
+        if (e.target.classList.contains("drop-down")) {
+            return;
+        }
+        // 如果点击了下拉框的子元素，则不处理
+        if (e.target.parentElement.classList.contains("drop-down")) {
+            return;
+        }
+        show_dropdown = false;
+        button.blur();
+    }
+
+    onMount(() => {
+        window.addEventListener("click", check_blur);
+    })
+
+    onDestroy(() => {
+        window.removeEventListener("click", check_blur);
+    })
 
 </script>
 
 <div class="container" class:dark={$theme === "dark"} class:light={$theme === "light"}>
-    <button on:focus={() => {show_dropdown = true;}} on:blur={() => {show_dropdown=false}}>
+    <button on:focus={() => {
+        if (cooling_down) {
+            return;
+        }
+        show_dropdown = true;
+        cooling_down = true;
+        setTimeout(() => {
+            cooling_down = false;
+        }, 500);
+    }} bind:this={button} class:focus={show_dropdown}>
         最新创建
         <span class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24"><path
@@ -20,20 +56,26 @@
 </div>
 
 {#if show_dropdown}
-    <div class="drop-down" class:dark={$theme === "dark"} class:light={$theme === "light"}>
-        Dropdown
+    <div class="drop-down" class:dark={$theme === "dark"} class:light={$theme === "light"}
+         transition:fly={{duration: 400, y: -10}}>
+        <p class="drop-down-item">最近更新</p>
+        <hr>
+        <p class="drop-down-item">最多数量</p>
     </div>
 {/if}
 
 
 <style>
+    * {
+        transition: all .2s;
+    }
+
     button {
         border-radius: 20px;
         height: 50px;
         width: 120px;
         border: none;
         outline: none;
-        transition: all .2s;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -66,15 +108,15 @@
         box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     }
 
-    .light button:hover, .light button:focus {
+    .light button:hover, .light button.focus {
         color: black;
     }
 
-    .dark button:hover, .dark button:focus {
+    .dark button:hover, .dark button.focus {
         color: white;
     }
 
-    button:focus {
+    button.focus {
         border: rgba(66, 165, 245, .6) 3px solid;
     }
 
@@ -83,14 +125,70 @@
         height: 20px;
         margin-top: 3px;
         margin-right: -5px;
+        transition: transform .3s ease-in-out;
     }
+
+    .focus .icon svg {
+        transform: rotate(180deg);
+    }
+
+    /*drop down*/
     .drop-down {
+        width: 100px;
         position: absolute;
         margin-top: 10px;
         border-radius: 20px;
-    }
-    .light.drop-down {
-        background-color: #fff;
+        padding: 5px 10px;
 
     }
+
+    .light.drop-down {
+        background-color: #fff;
+        box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 6px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+    }
+    .dark.drop-down {
+        background-color: #2E2E40;
+        box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 6px 0px, rgba(0, 0, 0, 0.2) 0px 0px 0px 1px;
+    }
+
+    .drop-down-item {
+        font-family: var(--font-sans-serif);
+        font-size: 16px;
+        text-align: center;
+        margin: 15px 0;
+        letter-spacing: 1px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .light .drop-down-item {
+        color: rgba(0, 0, 0, 0.7);
+    }
+
+    .dark .drop-down-item {
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .light .drop-down-item:hover {
+        color: black;
+    }
+    .dark .drop-down-item:hover {
+        color: white;
+    }
+
+    .drop-down-item:active {
+        scale: 0.95;
+    }
+
+    hr {
+        margin: 0;
+        border: none;
+    }
+    .light hr {
+        border-top: 2px solid rgba(0, 0, 0, 0.1);
+    }
+    .dark hr {
+        border-top: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+
 </style>

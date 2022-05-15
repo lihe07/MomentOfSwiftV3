@@ -50,8 +50,7 @@
     }
 
     main {
-        padding: 40px;
-        max-width: 80rem;
+        /*padding: 40px;*/
         margin: auto;
     }
 </style>

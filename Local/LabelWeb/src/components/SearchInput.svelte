@@ -36,6 +36,7 @@
     * {
         transition: all .2s;
     }
+
     .container {
         display: flex;
         align-items: center;
@@ -51,6 +52,7 @@
         background-color: #fff;
         box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 6px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
     }
+
     .dark.container {
         background-color: #2E2E40;
         box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 6px 0px, rgba(0, 0, 0, 0.2) 0px 0px 0px 1px;
@@ -68,13 +70,15 @@
         outline: none;
         padding: 0;
         background: transparent;
-        font-size: 18px;
+        font-size: 15px;
         margin: 0 5px;
+        letter-spacing: 1px;
     }
 
     .light input {
         color: #000;
     }
+
     .dark input {
         color: #fff;
     }
@@ -92,10 +96,12 @@
         height: 18px;
 
     }
+
     .light svg {
         color: rgba(0, 0, 0, 0.5);
         fill: rgba(0, 0, 0, 0.5);
     }
+
     .dark svg {
         color: rgba(255, 255, 255, 0.5);
         fill: rgba(255, 255, 255, 0.5);
