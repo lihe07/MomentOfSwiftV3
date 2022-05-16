@@ -3,6 +3,8 @@
 pub mod collections;
 mod config;
 
+pub use collections::*;
+
 #[cfg(test)]
 mod tests {
     #[test]

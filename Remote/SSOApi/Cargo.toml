@@ -1,9 +1,13 @@
 [package]
-name = "SwiftBackend"
-version = "3.0.0"
+name = "sso_api"
+version = "0.1.0"
 edition = "2021"
 authors = ["lihe07"]
-description = "3.x版本系统的后端服务"
+description = "SSO API"
 
 
 [dependencies]
+tide = "0.16.0"
+data_model = { path = "../DataModel/data_model" }
+api_basics = { path = "../ApiBasics" }
+async-std = "1.11.0"
