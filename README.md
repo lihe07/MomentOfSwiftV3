@@ -13,8 +13,10 @@
   - [ ] **StorageApi**：访问及操作云COS
   - [ ] **DashboardApi**：大部分数据交互
   - [ ] **LabelApi**：运行模型及标注数据
+  - [ ] **LabelWS**：负责多人协作标注的通讯部分
   - [ ] **CommunityApi**：社区数据交互
   - [ ] **DataModel(lib)**：数据模型
+  - [ ] **ApiBasics(lib)**：一些全部Api共用的内容
 - **Docs**：设计文档
 
 ## 网络架构
