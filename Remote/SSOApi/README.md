@@ -35,3 +35,16 @@
 - [ ] **HEAD** `/verification/<id>`：获取某个验证码的metadata
 
 - [ ] **POST** `/login`：提交登录表单
+
+- [ ] **GET** `/invitations/<code>`：搜索一个邀请的详细信息
+
+  **Session必须经过验证**
+
+  *失败太多次则吊销验证*
+
+## 表单文档
+
+- 注册表单 **POST** `/users `
+  - `name: String` - 用户姓名
+  - `invitation: String` - 邀请码
+  - `password: String` - 加密后的密码
