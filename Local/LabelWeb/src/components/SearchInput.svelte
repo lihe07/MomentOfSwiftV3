@@ -46,16 +46,17 @@
         border-radius: 20px;
         padding: 5px 15px;
         transition: all .2s;
-        border: 3px solid #fff;
     }
 
     .light.container {
         background-color: #fff;
+        border: 3px solid #fff;
         box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 6px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
     }
 
     .dark.container {
         background-color: #2E2E40;
+        border: 3px solid #2E2E40;
         box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 6px 0px, rgba(0, 0, 0, 0.2) 0px 0px 0px 1px;
     }
 
