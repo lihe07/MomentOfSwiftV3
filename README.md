@@ -32,7 +32,7 @@
 ### 域及子域
 
 - [x] ~~**www**：静态的门户页面（不在本项目内）~~
-- [ ] **storage**：腾讯COS
+- [ ] **storage**：腾讯COS / 阿里云OSS
 - [ ] **storage-api**：后端服务*StorageApi*
 - [ ] **sso**：前端服务*SSOWeb*
 - [ ] **sso-api**：后端服务*SSOApi*

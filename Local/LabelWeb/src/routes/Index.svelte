@@ -35,7 +35,7 @@
 
     }
 
-    let dragging_over = true;
+    let dragging_over = false;
     let unsupported_msg = "";
 
     function drag_enter(e) {
@@ -43,8 +43,13 @@
         e.stopPropagation();
         e.dataTransfer.dropEffect = "copy";
         dragging_over = true;
+        unsupported_msg = "";
         if (e.dataTransfer.items.length > 1) {
             unsupported_msg = "仅支持单次上传一个图片文件";
+            return;
+        }
+        if (e.dataTransfer.items.length === 0) {
+            unsupported_msg = "无法读取文件";
             return;
         }
         let item = e.dataTransfer.items[0];
@@ -62,14 +67,19 @@
     }
 
     function drag_leave(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dragging_over = false;
-        unsupported_msg = "";
+        // Check mouse position to know if we left the window
+        let x = e.clientX, y = e.clientY;
+        let w = window.innerWidth, h = window.innerHeight;
+        if (x <= 0 || x >= w || y <= 0 || y >= h) {
+            // Real leave event
+            e.preventDefault();
+            e.stopPropagation();
+            dragging_over = false;
+
+        }
     }
 
     function drag_over(e) {
-        // console.log("over")
         e.preventDefault();
         e.stopPropagation();
     }
@@ -80,15 +90,13 @@
         window.addEventListener("dragleave", drag_leave);
         window.addEventListener("dragover", drag_over);
         window.addEventListener("drop", handle_drop);
+        return () => {
+            window.removeEventListener("dragenter", drag_enter);
+            window.removeEventListener("dragleave", drag_leave);
+            window.removeEventListener("dragover", drag_over);
+            window.removeEventListener("drop", handle_drop);
+        }
     })
-
-    onDestroy(() => {
-        window.removeEventListener("dragenter", drag_enter);
-        window.removeEventListener("dragleave", drag_leave);
-        window.removeEventListener("dragover", drag_over);
-        window.removeEventListener("drop", handle_drop);
-    })
-
 </script>
 
 
@@ -97,7 +105,7 @@
         <div class="dashed-box">
             <h2>将图片拖拽到这里快速创建计数</h2>
             <p>支持上传单张图片文件</p>
-            <p>{unsupported_msg}</p>
+            <p class="warn">{unsupported_msg}</p>
         </div>
     </div>
     <div class="header">
@@ -120,7 +128,7 @@
 <style>
     .index {
         max-width: 80rem;
-        margin: 40px;
+        margin: 40px auto;
     }
 
     .header {
@@ -128,9 +136,10 @@
         justify-content: space-between;
         align-items: center;
         padding: 0 20px;
+
     }
 
-    .drag {1
+    .drag {
         position: fixed;
         top: 0;
         left: 0;
@@ -139,13 +148,34 @@
         background: rgba(0, 0, 0, 0.5);
         z-index: 100;
         opacity: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 0.3s ease-in-out;
+        pointer-events: none;
     }
+
     .drag.show {
         opacity: 1;
     }
+
     .dashed-box {
-        margin：100px;
-        display: flex;
+        margin: 100px;
+        padding: 50px;
         border: 1px dashed #fff;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    h2 {
+        color: white;
+    }
+
+    p {
+        color: white;
+    }
+
+    .warn {
+        color: #fbc02d;
     }
 </style>

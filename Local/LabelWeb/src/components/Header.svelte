@@ -153,6 +153,7 @@
         line-height: 100%;
         font-size: 18px;
         font-family: var(--font-sans-serif);
+        transition: color .2s;
     }
 
     a > svg {
@@ -171,7 +172,7 @@
 
     .dark a.active {
         color: white;
-        text-shadow: 0px 0px 4px rgba(255, 255, 255, 0.5);
+        text-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
     }
 
     .light a.active {
@@ -179,9 +180,9 @@
         /*text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);*/
     }
 
-    .light a.active svg {
-        filter: drop-shadow(0, 0, 4px, rgba(0, 0, 0, 0.5));
-    }
+    /*.light a.active svg {*/
+    /*    filter: drop-shadow(0, 0, 4px, rgba(0, 0, 0, 0.5));*/
+    /*}*/
 
     .main :global(.switch) {
         width: 70px !important;

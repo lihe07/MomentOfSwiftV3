@@ -41,11 +41,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 40px;
+        height: 34px;
         width: 210px;
         border-radius: 20px;
         padding: 5px 15px;
         transition: all .2s;
+        border: 3px solid #fff;
     }
 
     .light.container {
@@ -61,6 +62,11 @@
 
     .container:hover, .container.focused {
         box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    }
+
+    .container.focused {
+        border: rgba(66, 165, 245, .6) 3px solid;
+
     }
 
     input {
