@@ -7,11 +7,6 @@
 - [/src/](./src/README.md): Source Code
 - /Cargo.toml: Project Configuration
 
-## 主要上游项目
-
-- [async-std](https://github.com/async-rs/async-std)
-- [tide](https://github.com/http-rs/tide/)
-
 ## 接口文档
 
 - [ ] **GET** `/users`：查询用户

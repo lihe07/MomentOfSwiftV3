@@ -95,3 +95,35 @@
   - 新建一个用户：**POST** `/users`
 
 只能用于普通资源，不得用于子资源（如`/users/114514/name`）
+
+## 3. 响应
+
+### 3.1 响应码
+
+总体可以分为三类：
+
+1. 成功（2xx）：直接返回内容
+2. 重定向（3xx）：重定向，**不会出现在API响应中**
+3. 客户端错误（4xx）：返回**标准错误模板**
+4. 服务器错误（5xx）：返回**标准错误模板**
+
+### 3.2 响应内容
+
+任何时候都不应该包装响应内容
+
+除了及特殊需求，任何时候均应该返回`application/json`
+
+### 3.3 标准错误模板
+
+```json
+{
+    "error": "password_or_username", // 错误的命名不需包含"error"，未知错误为"unknown"
+    "details": _, // 可以为任意内容，如某个错误需要传输数据则体现在这里
+    "backtrace": // 完整回溯(如果有)
+` 0: std::backtrace_rs::backtrace::dbghelp::trace
+  	at ...
+  24: BaseThreadInitThunk
+  25: RtlUserThreadStart`
+}
+```
+
