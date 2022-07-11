@@ -109,22 +109,24 @@
         opacity: 1;
         cursor: default;
     }
+
     .tab:active {
         scale: 0.9;
     }
+
     .tab.current:active {
         scale: 1;
     }
 
     .cooling_down {
-        opacity: 0.7;
-
+        opacity: 0.6;
         box-shadow: 0 0 0 rgba(0, 0, 0, 0) !important;
     }
 
     .cooling_down .tab {
-        cursor: default;
+        cursor: not-allowed;
     }
+
     .cooling_down .tab:active {
         scale: 1;
     }

@@ -6,8 +6,13 @@
 
     const dispatch = createEventDispatcher();
 
-    let show_dropdown = true;
+
+    export let current = "最新创建";
+    $:others = ["最新创建", "最近更新", "最多数量"].filter(ele => ele !== current)
+
+    let show_dropdown = false;
     let cooling_down = false;
+    let select_cooling_down = false;
     let button;
 
     function check_blur(e) {
@@ -18,27 +23,39 @@
         if (e.target.classList.contains("drop-down")) {
             return;
         }
-        // 如果点击了下拉框的子元素，则不处理
-        if (e.target.parentElement.classList.contains("drop-down")) {
+        // // 如果点击了下拉框的子元素，则不处理
+        // if (e.target.parentElement.classList.contains("drop-down")) {
+        //     return;
+        // }
+        // 如果点到了hr，则不处理
+        if (e.target.tagName === "hr") {
             return;
         }
         show_dropdown = false;
         button.blur();
     }
 
+    function select(id) {
+        current = others[id];
+        dispatch("select", current);
+        select_cooling_down = true;
+        setTimeout(() => select_cooling_down = false, 1000)
+    }
+
+
     onMount(() => {
         window.addEventListener("click", check_blur);
+        return () => {
+            window.removeEventListener("click", check_blur);
+        }
     })
 
-    onDestroy(() => {
-        window.removeEventListener("click", check_blur);
-    })
 
 </script>
 
-<div class="container" class:dark={$theme === "dark"} class:light={$theme === "light"}>
+<div class="container" class:dark={$theme === "dark"} class:light={$theme === "light"} class:select_cooling_down>
     <button on:focus={() => {
-        if (cooling_down) {
+        if (cooling_down || select_cooling_down) {
             return;
         }
         show_dropdown = true;
@@ -47,7 +64,7 @@
             cooling_down = false;
         }, 500);
     }} bind:this={button} class:focus={show_dropdown}>
-        最新创建
+        {current}
         <span class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24"><path
                     d="M7 10l5 5l5-5z" fill="currentColor"></path></svg>
@@ -58,15 +75,20 @@
 {#if show_dropdown}
     <div class="drop-down" class:dark={$theme === "dark"} class:light={$theme === "light"}
          transition:fly={{duration: 400, y: -10}}>
-        <p class="drop-down-item">最近更新</p>
-        <hr>
-        <p class="drop-down-item">最多数量</p>
+
+        {#each others as other, i (other)}
+            {#if i !== 0}
+                <hr>
+            {/if}
+            <p class="drop-down-item" on:click={() => select(i)}>{other}</p>
+
+        {/each}
     </div>
 {/if}
 
 
 <style>
-    * {
+    *:not(.icon *, .icon) {
         transition: all .2s;
     }
 
@@ -84,6 +106,7 @@
         cursor: pointer;
         padding: 15px;
         white-space: nowrap;
+
     }
 
     button:active {
@@ -108,11 +131,11 @@
         box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     }
 
-    .light button:hover, .light button.focus {
+    .light:not(.select_cooling_down) button:hover, .light button.focus {
         color: black;
     }
 
-    .dark button:hover, .dark button.focus {
+    .dark:not(.select_cooling_down) button:hover, .dark button.focus {
         color: white;
     }
 
@@ -125,8 +148,9 @@
         height: 20px;
         margin-top: 3px;
         margin-right: -5px;
-        transition: transform .3s ease-in-out;
+        transition: transform .3s ease-in-out, color 0s;
     }
+
 
     .focus .icon svg {
         transform: rotate(180deg);
@@ -139,6 +163,7 @@
         margin-top: 10px;
         border-radius: 20px;
         padding: 5px 10px;
+        z-index: 1;
 
     }
 
@@ -146,6 +171,7 @@
         background-color: #fff;
         box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 6px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
     }
+
     .dark.drop-down {
         background-color: #2E2E40;
         box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 6px 0px, rgba(0, 0, 0, 0.2) 0px 0px 0px 1px;
@@ -168,9 +194,11 @@
     .dark .drop-down-item {
         color: rgba(255, 255, 255, 0.8);
     }
+
     .light .drop-down-item:hover {
         color: black;
     }
+
     .dark .drop-down-item:hover {
         color: white;
     }
@@ -183,11 +211,18 @@
         margin: 0;
         border: none;
     }
+
     .light hr {
         border-top: 2px solid rgba(0, 0, 0, 0.1);
     }
+
     .dark hr {
         border-top: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .select_cooling_down button {
+        opacity: 0.6;
+        cursor: not-allowed;
     }
 
 

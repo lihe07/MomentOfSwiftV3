@@ -3,10 +3,14 @@
 <script>
     // Stores & Apis
     import {theme} from "../stores";
+    import {onMount} from "svelte";
 
     // Components
     import CustomScroll from "../components/CustomScroll.svelte";
     import EditorToolsPanel from "../components/EditorToolsPanel.svelte";
+
+    export let params;
+    alert(params.id)
 
 
     // Debug

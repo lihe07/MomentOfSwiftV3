@@ -14,7 +14,7 @@
 
     const routes = {
         "/": Index,
-        "/editor": Editor,
+        "/edit/:id": Editor,
         "/*": Index
     };
 </script>
