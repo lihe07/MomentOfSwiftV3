@@ -12,4 +12,4 @@
 
   如果Error为None，则是客户端错误，响应400且不包含`backtrace`
 
-- [ ] 
+- [ ] `paginate(cursor: Cursor<T>, limit: u32, page: u32) -> tide::Response`：制作一个分页响应

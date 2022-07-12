@@ -8,5 +8,4 @@
 
 - [ ] **GET** `/countings`：查询全部计数任务
 
-  支持的Query：`creator`，
-
+  支持的Query：`creator`，`sort`
