@@ -23,16 +23,16 @@
 
 ### 托管及部署
 
-全部后端服务均部署在[SCF云函数](https://console.cloud.tencent.com/scf)上
+全部后端服务均部署在[云函数 FC](https://www.aliyun.com/product/fc)上
 
-全部前端服务均托管于开启了**静态网站模式的**[COS对象存储](https://console.cloud.tencent.com/cos/)上，每一个服务占用一个存储桶
+全部前端服务均托管于开启了**静态网站模式的**[对象存储 OSS](https://www.aliyun.com/product/oss)上，每一个服务占用一个存储桶
 
-全部服务共用的永久存储为[云数据库MongoDb](https://console.cloud.tencent.com/mongodb)，统一使用一个数据库实例，*开发时使用本地数据库*
+全部服务共用的永久存储为[云数据库 MySQL](https://www.aliyun.com/product/rds/mysql)，统一使用一个数据库实例，*开发时使用本地数据库*
 
 ### 域及子域
 
 - [x] ~~**www**：静态的门户页面（不在本项目内）~~
-- [ ] **storage**：腾讯COS / 阿里云OSS
+- [ ] **storage**：阿里云OSS
 - [ ] **storage-api**：后端服务*StorageApi*
 - [ ] **sso**：前端服务*SSOWeb*
 - [ ] **sso-api**：后端服务*SSOApi*
@@ -44,3 +44,4 @@
 ## 时间线
 
 - 2022/4/7：初步规划系统架构，创建存储库，创建本文档
+- 2022/7/27：决定放弃MongoDB改用MySQL

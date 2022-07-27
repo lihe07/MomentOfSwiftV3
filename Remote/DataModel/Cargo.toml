@@ -1,5 +1,0 @@
-[workspace]
-members = [
-    "data_model",
-    "data_model_macro",
-]
